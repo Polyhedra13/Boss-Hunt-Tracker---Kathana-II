@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>&lt;.JoyStickRevenGe.&gt; Boss Hunt Tracker</title>
+<style>
+:root{--bg:#f6f4fb;--surface:#fff;--text:#1d1733;--muted:#6b6485;--accent:#6d3fd1;--accent-soft:#ece5fb;--line:#e3dff0;--danger:#c9394f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15121f;--surface:#211c31;--text:#f1edff;--muted:#a59dc2;--accent:#a684ff;--accent-soft:#2d2643;--line:#342f4a;--danger:#ff6b81}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+header{padding:20px 16px 8px;max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1{font-size:1.4rem;margin:0}
+h2{font-size:1.05rem;margin:0 0 12px}
+.sub{color:var(--muted);font-size:.9rem;margin-top:4px}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+nav{display:flex;gap:6px;flex-wrap:wrap;max-width:960px;margin:12px auto 0;padding:0 16px}
+nav button{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:.9rem}
+nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+main{max-width:960px;margin:16px auto;padding:0 16px 40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:10px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:.95rem;margin-top:4px}
+input[type=checkbox]{width:auto;margin:0}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0 12px}
+legend{color:var(--muted);font-size:.85rem;padding:0 4px}
+.chks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.chk{display:flex;align-items:center;gap:6px;color:var(--text);font-size:.92rem;margin:0}
+button.primary{background:var(--accent);color:#fff;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:.95rem}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.85rem}
+button.del{background:transparent;border:1px solid var(--danger);color:var(--danger);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.85rem}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1 1 auto}
+.row button{flex:0 0 auto}
+.muted{color:var(--muted);font-size:.9rem}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-weight:600;font-size:.82rem}
+td:first-child{width:36px;color:var(--muted)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.item:last-child{border-bottom:0}
+.item .meta{flex:1 1 200px;font-size:.92rem}
+.item .meta small{display:block;color:var(--muted);margin-top:2px}
+.item input{width:110px;margin:0}
+.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 8px;font-size:.78rem;font-weight:600}
+ol.rules li{margin-bottom:10px;line-height:1.5}
+.empty{padding:14px 0;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100}
+.dlg{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:18px;max-width:380px;width:100%}
+.dlg p{margin:0 0 12px;line-height:1.5}
+.dlg .row{justify-content:flex-end;margin-top:12px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;max-width:90%;opacity:0;pointer-events:none;transition:opacity .2s;z-index:110}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&lt;.JoyStickRevenGe.&gt; Boss Hunt Tracker</h1>
+    <div class="sub">Record kills, track points, and redeem rewards.</div>
+  </div>
+  <div class="row" style="flex:0 0 auto" id="auth"></div>
+</header>
+<nav>
+  <button data-t="board" onclick="setTab('board')">Leaderboard</button>
+  <button data-t="boss" onclick="setTab('boss')">Boss Hunts</button>
+  <button data-t="shop" onclick="setTab('shop')">Shop</button>
+  <button data-t="setup" onclick="setTab('setup')">Players &amp; Bosses</button>
+  <button data-t="rules" onclick="setTab('rules')">Rules</button>
+</nav>
+<main><div id="view"><div class="empty">Loading…</div></div></main>
+
+<script>
+let state = null, rev = 0, canEdit = false, tab = 'board', pass = '';
+let saveChain = Promise.resolve();
+
+function uid(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+function defaults(){
+  return {
+    players: [],
+    bosses: [{id:uid(),name:'Raphu',points:10},{id:uid(),name:'Egypt Party',points:15},{id:uid(),name:'Meghamallin',points:20}],
+    items: [{id:uid(),name:'Prajati',cost:30},{id:uid(),name:'Surapa',cost:50},{id:uid(),name:'Crystal',cost:20},{id:uid(),name:'Sumati',cost:40}],
+    kills: [], redemptions: []
+  };
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const card = h => `<section class="card">${h}</section>`;
+const E = h => canEdit ? h : '';
+const fmt = iso => new Date(iso).toLocaleString(undefined,{dateStyle:'medium', timeStyle:'short'});
+const nowLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,16); };
+const playerName = id => (state.players.find(p => p.id === id) || {}).name || '(removed)';
+
+/* ---------- Notices and dialogs ---------- */
+function notify(msg){
+  let t = document.getElementById('toast');
+  if(!t){ t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.className = 'show';
+  clearTimeout(notify._t); notify._t = setTimeout(() => { t.className = ''; }, 4000);
+}
+function dialog(msg, extra, okLabel, onOk){
+  const o = document.createElement('div'); o.className = 'overlay';
+  const box = document.createElement('div'); box.className = 'dlg';
+  const p = document.createElement('p'); p.textContent = msg; box.append(p);
+  let input = null;
+  if(extra){
+    input = document.createElement('input'); input.type = 'password'; input.placeholder = 'Editor passcode';
+    input.autocomplete = 'current-password'; box.append(input);
+  }
+  const row = document.createElement('div'); row.className = 'row';
+  const no = document.createElement('button'); no.className = 'ghost'; no.textContent = 'Cancel';
+  const yes = document.createElement('button'); yes.className = 'primary'; yes.textContent = okLabel;
+  no.onclick = () => o.remove();
+  const go = () => { o.remove(); onOk(input ? input.value : null); };
+  yes.onclick = go;
+  if(input) input.onkeydown = e => { if(e.key === 'Enter') go(); };
+  row.append(no, yes); box.append(row); o.append(box); document.body.appendChild(o);
+  if(input) input.focus();
+}
+const askConfirm = (msg, onYes) => dialog(msg, false, 'Confirm', onYes);
+
+/* ---------- Server ---------- */
+async function loadState(){
+  const r = await fetch('/api', {cache:'no-store'});
+  const d = await r.json();
+  state = d.state || defaults();
+  rev = d.rev || 0;
+}
+async function checkPass(pw){
+  try{ const r = await fetch('/api?check=1', {headers:{'x-passcode':pw}}); return r.ok; }
+  catch(e){ return false; }
+}
+async function push(){
+  if(!canEdit) return;
+  try{
+    const r = await fetch('/api', {
+      method:'POST',
+      headers:{'content-type':'application/json','x-passcode':pass},
+      body: JSON.stringify({state, baseRev: rev})
+    });
+    if(r.status === 401){ lock(); notify('Passcode is no longer valid. Editing locked.'); return; }
+    const d = await r.json();
+    if(r.status === 409){ state = d.state || defaults(); rev = d.rev; render(); notify('Someone else just saved changes. Your last action was not saved, please redo it.'); return; }
+    if(!r.ok){ notify('Could not save. Please try again.'); return; }
+    rev = d.rev;
+  }catch(e){ notify('Network error. Your last change was not saved.'); }
+}
+function commit(){ render(); saveChain = saveChain.then(push); }
+
+/* ---------- Editor access ---------- */
+function unlock(){
+  dialog('Enter the editor passcode to add or change records.', true, 'Unlock', async pw => {
+    if(!pw) return;
+    if(await checkPass(pw)){
+      pass = pw; canEdit = true;
+      try{ localStorage.setItem('jsr-pass', pw); }catch(e){}
+      render(); notify('Editing unlocked.');
+    }else notify('Wrong passcode.');
+  });
+}
+function lock(){
+  pass = ''; canEdit = false;
+  try{ localStorage.removeItem('jsr-pass'); }catch(e){}
+  render();
+}
+async function refresh(){ await loadState(); render(); notify('Up to date.'); }
+
+/* ---------- Scores ---------- */
+function balances(){
+  const m = {};
+  state.players.forEach(p => m[p.id] = {earned:0, spent:0, hunts:0});
+  state.kills.forEach(k => Object.entries(k.awards).forEach(([pid, pts]) => { if(m[pid]){ m[pid].earned += pts; m[pid].hunts++; } }));
+  state.redemptions.forEach(r => { if(m[r.playerId]) m[r.playerId].spent += r.cost; });
+  return m;
+}
+
+/* ---------- Actions ---------- */
+function addPlayer(){
+  const name = $('#np').value.trim();
+  if(!name) return;
+  if(state.players.some(p => p.name.toLowerCase() === name.toLowerCase())){ notify('That player already exists.'); return; }
+  state.players.push({id:uid(), name}); commit();
+}
+function removePlayer(id){
+  if(state.kills.some(k => k.awards[id] !== undefined) || state.redemptions.some(r => r.playerId === id)){
+    notify('This player has hunt or redemption history, so they cannot be removed.'); return;
+  }
+  askConfirm('Remove this player?', () => { state.players = state.players.filter(p => p.id !== id); commit(); });
+}
+function addBoss(){
+  const name = $('#nbn').value.trim(), points = parseInt($('#nbp').value, 10);
+  if(!name || isNaN(points) || points < 0){ notify('Enter a boss name and a valid point value.'); return; }
+  state.bosses.push({id:uid(), name, points}); commit();
+}
+function removeBoss(id){
+  askConfirm('Remove this boss from the list? Past kills keep their record.', () => { state.bosses = state.bosses.filter(b => b.id !== id); commit(); });
+}
+function setBossPoints(id, v){
+  const b = state.bosses.find(x => x.id === id), n = parseInt(v, 10);
+  if(b && !isNaN(n) && n >= 0){ b.points = n; commit(); }
+}
+function recordKill(){
+  const boss = state.bosses.find(b => b.id === $('#kb').value), dt = $('#kd').value;
+  const attendees = [...document.querySelectorAll('.att:checked')].map(c => c.value);
+  if(!boss){ notify('Add a boss first in Players & Bosses.'); return; }
+  if(!dt){ notify('Choose the date and time the boss was killed.'); return; }
+  if(!attendees.length){ notify('Select at least one attendee.'); return; }
+  const awards = {}; attendees.forEach(pid => awards[pid] = boss.points);
+  state.kills.push({id:uid(), bossName:boss.name, basePoints:boss.points, datetime:new Date(dt).toISOString(), awards, createdAt:new Date().toISOString()});
+  commit();
+}
+function deleteKill(id){
+  askConfirm('Delete this kill? Points awarded for it will be removed.', () => { state.kills = state.kills.filter(k => k.id !== id); commit(); });
+}
+function addItem(){
+  const name = $('#nin').value.trim(), cost = parseInt($('#nic').value, 10);
+  if(!name || isNaN(cost) || cost < 0){ notify('Enter an item name and a valid cost.'); return; }
+  state.items.push({id:uid(), name, cost}); commit();
+}
+function removeItem(id){
+  askConfirm('Remove this item from the shop? Past redemptions keep their record.', () => { state.items = state.items.filter(i => i.id !== id); commit(); });
+}
+function setItemCost(id, v){
+  const it = state.items.find(x => x.id === id), n = parseInt(v, 10);
+  if(it && !isNaN(n) && n >= 0){ it.cost = n; commit(); }
+}
+function redeem(){
+  const pid = $('#rp').value, item = state.items.find(i => i.id === $('#ri').value), bal = balances()[pid];
+  if(!pid || !item || !bal){ notify('Choose a player and an item.'); return; }
+  const balance = bal.earned - bal.spent;
+  if(item.cost > balance){ notify(`Not enough points. Balance: ${balance}, cost: ${item.cost}.`); return; }
+  state.redemptions.push({id:uid(), playerId:pid, itemName:item.name, cost:item.cost, datetime:new Date().toISOString()});
+  commit();
+}
+function deleteRedemption(id){
+  askConfirm('Undo this redemption? The points will be returned.', () => { state.redemptions = state.redemptions.filter(r => r.id !== id); commit(); });
+}
+
+/* ---------- Views ---------- */
+function viewBoard(b){
+  const rows = state.players.map(p => ({p, ...b[p.id]}))
+    .sort((x,y) => (y.earned - y.spent) - (x.earned - x.spent) || x.p.name.localeCompare(y.p.name));
+  if(!rows.length) return card('<div class="empty">No players yet.</div>');
+  return card(`<h2>Leaderboard</h2><div class="scroll"><table>
+    <thead><tr><th>#</th><th>Player</th><th>Hunts</th><th>Earned</th><th>Spent</th><th>Balance</th></tr></thead>
+    <tbody>${rows.map((r,i) => `<tr><td>${i+1}</td><td>${esc(r.p.name)}</td><td>${r.hunts}</td><td>${r.earned}</td><td>${r.spent}</td><td><b>${r.earned - r.spent}</b></td></tr>`).join('')}</tbody></table></div>
+    <div class="muted" style="margin-top:10px">Ranked by current balance. Ties are sorted alphabetically.</div>`);
+}
+
+function viewBoss(){
+  const checks = state.players.map(p => `<label class="chk"><input type="checkbox" class="att" value="${p.id}"> ${esc(p.name)}</label>`).join('');
+  const bossOpts = state.bosses.map(b => `<option value="${b.id}">${esc(b.name)} (${b.points} pts)</option>`).join('');
+  const form = state.players.length && state.bosses.length
+    ? card(`<h2>Record a boss kill</h2>
+       <div class="grid2">
+         <label>Boss<select id="kb">${bossOpts}</select></label>
+         <label>Date &amp; time killed<input type="datetime-local" id="kd" value="${nowLocal()}"></label>
+       </div>
+       <fieldset><legend>Attendees (each gets the boss's full points)</legend><div class="chks">${checks}</div></fieldset>
+       <button class="primary" onclick="recordKill()">Record kill</button>`)
+    : card('<div class="empty">Add at least one player and one boss under Players &amp; Bosses first.</div>');
+
+  const kills = [...state.kills].sort((a,b) => b.datetime.localeCompare(a.datetime));
+  const history = kills.length ? kills.map(k => `<div class="item">
+      <div class="meta"><b>${esc(k.bossName)}</b> <span class="pill">${Object.keys(k.awards).length} players</span>
+        <small>${fmt(k.datetime)}</small>
+        <small>${Object.entries(k.awards).map(([pid,pts]) => `${esc(playerName(pid))} +${pts}`).join(', ')}</small></div>
+      ${E(`<button class="del" onclick="deleteKill('${k.id}')">Delete</button>`)}</div>`).join('')
+    : '<div class="empty">No kills recorded yet.</div>';
+  return E(form) + card(`<h2>Kill history</h2>${history}`);
+}
+
+function viewShop(b){
+  const playerOpts = state.players.map(p => `<option value="${p.id}">${esc(p.name)} (${b[p.id].earned - b[p.id].spent} pts)</option>`).join('');
+  const itemOpts = state.items.map(i => `<option value="${i.id}">${esc(i.name)} (${i.cost} pts)</option>`).join('');
+  const items = state.items.length ? state.items.map(i => `<div class="item">
+      <div class="meta">${esc(i.name)}</div>
+      ${canEdit ? `<div class="row" style="flex:0 0 auto"><input type="number" min="0" value="${i.cost}" onchange="setItemCost('${i.id}', this.value)"> <span class="muted">pts</span>
+        <button class="del" onclick="removeItem('${i.id}')">Remove</button></div>` : `<b>${i.cost} pts</b>`}</div>`).join('')
+    : '<div class="empty">No items yet.</div>';
+  const addRow = `<div style="margin-top:12px" class="row">
+        <input id="nin" placeholder="Item name (e.g. Prajati)" style="flex:2"><input id="nic" type="number" min="0" placeholder="Cost" style="flex:1">
+        <button class="ghost" onclick="addItem()">Add item</button></div>`;
+  const redeemForm = state.players.length && state.items.length
+    ? `<h2>Redeem an item</h2><div class="grid2">
+         <label>Player<select id="rp">${playerOpts}</select></label><label>Item<select id="ri">${itemOpts}</select></label></div>
+       <button class="primary" onclick="redeem()">Redeem</button>`
+    : '<div class="empty">Add players and items to redeem rewards.</div>';
+  const reds = [...state.redemptions].sort((a,b) => b.datetime.localeCompare(a.datetime));
+  const redHistory = reds.length ? reds.map(r => `<div class="item">
+      <div class="meta"><b>${esc(playerName(r.playerId))}</b> redeemed <b>${esc(r.itemName)}</b> for ${r.cost} pts<small>${fmt(r.datetime)}</small></div>
+      ${E(`<button class="ghost" onclick="deleteRedemption('${r.id}')">Undo</button>`)}</div>`).join('')
+    : '<div class="empty">No redemptions yet.</div>';
+  return card(`<h2>Shop items</h2>${items}${E(addRow)}`) + E(card(redeemForm)) + card(`<h2>Redemption history</h2>${redHistory}`);
+}
+
+function viewSetup(){
+  const players = state.players.length ? state.players.map(p => `<div class="item"><div class="meta">${esc(p.name)}</div>
+      ${E(`<button class="del" onclick="removePlayer('${p.id}')">Remove</button>`)}</div>`).join('')
+    : '<div class="empty">No players yet.</div>';
+  const bosses = state.bosses.length ? state.bosses.map(b => `<div class="item"><div class="meta">${esc(b.name)}</div>
+      ${canEdit ? `<div class="row" style="flex:0 0 auto"><input type="number" min="0" value="${b.points}" onchange="setBossPoints('${b.id}', this.value)"> <span class="muted">pts</span>
+        <button class="del" onclick="removeBoss('${b.id}')">Remove</button></div>` : `<b>${b.points} pts</b>`}</div>`).join('')
+    : '<div class="empty">No bosses yet.</div>';
+  return `<div class="grid2">
+    ${card(`<h2>Players</h2>${players}${E(`<div style="margin-top:12px" class="row">
+        <input id="np" placeholder="Player name" onkeydown="if(event.key==='Enter')addPlayer()"><button class="primary" onclick="addPlayer()">Add</button></div>`)}`)}
+    ${card(`<h2>Bosses</h2>${bosses}${E(`<div style="margin-top:12px" class="row">
+        <input id="nbn" placeholder="Boss name" style="flex:2"><input id="nbp" type="number" min="0" placeholder="Pts" style="flex:1">
+        <button class="ghost" onclick="addBoss()">Add</button></div>`)}`)}
+  </div>`;
+}
+
+function viewRules(){
+  return card(`<h2>How scoring works</h2><ol class="rules">
+    <li><b>Equal reward for everyone present.</b> Every attendee on a kill earns the boss's full point value. Points are never split, so joining a hunt never lowers anyone's score.</li>
+    <li><b>Boss value reflects difficulty.</b> Harder bosses are worth more. Defaults are Raphu 10, Egypt Party 15, and Meghamallin 20.</li>
+    <li><b>Attendance is recorded per kill.</b> Only people checked as attendees earn points.</li>
+    <li><b>Scores are locked at kill time.</b> Changing a boss value later does not rewrite past results.</li>
+    <li><b>Redemptions cannot overdraw.</b> A player can only redeem an item if their balance covers the cost. Undoing a redemption returns the points.</li>
+    <li><b>Corrections are safe.</b> Deleting a kill removes its points. Players with any history cannot be removed.</li>
+    <li><b>Ranking.</b> The leaderboard ranks by current balance, with ties sorted alphabetically.</li>
+    <li><b>Who can edit.</b> Everyone can view. Only officers with the editor passcode can record or change anything.</li>
+  </ol>`);
+}
+
+function render(){
+  if(!state) return;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  $('#auth').innerHTML = `<span class="badge">${canEdit ? 'Editor' : 'View only'}</span>
+    <button class="ghost" onclick="refresh()">Refresh</button>
+    ${canEdit ? '<button class="ghost" onclick="lock()">Lock</button>' : '<button class="ghost" onclick="unlock()">Editor login</button>'}`;
+  const b = balances();
+  $('#view').innerHTML = tab === 'board' ? viewBoard(b) : tab === 'shop' ? viewShop(b)
+    : tab === 'boss' ? viewBoss() : tab === 'setup' ? viewSetup() : viewRules();
+}
+function setTab(t){ tab = t; render(); }
+
+/* ---------- Start ---------- */
+(async function init(){
+  try{ await loadState(); }
+  catch(e){ state = defaults(); notify('Could not reach the server.'); }
+  try{
+    const saved = localStorage.getItem('jsr-pass');
+    if(saved && await checkPass(saved)){ pass = saved; canEdit = true; }
+  }catch(e){}
+  render();
+  // Viewers get fresh data automatically.
+  setInterval(async () => {
+    if(canEdit || document.hidden) return;
+    const old = rev;
+    try{ await loadState(); if(rev !== old) render(); }catch(e){}
+  }, 30000);
+})();
+</script>
+</body>
+</html>
