@@ -298,6 +298,7 @@ function removeDonor(id){
 function addInvItem(){
   const name = $('#in').value.trim(), qty = parseInt($('#iq').value, 10);
   if(!name || isNaN(qty) || qty < 0){ notify('Enter an item name and a quantity of 0 or more.'); return; }
+  if(name.toLowerCase() === 'raphu key'){ notify('Raphu Key is counted automatically from the Raphu Keys Donation page.'); return; }
   const ex = state.inventory.find(i => i.name.toLowerCase() === name.toLowerCase());
   if(ex){ ex.qty += qty; notify(`${ex.name} already existed, so the quantity was added to it.`); }
   else state.inventory.push({id:uid(), name, qty});
@@ -399,9 +400,13 @@ function viewSetup(){
 }
 
 function viewInventory(){
-  const list = [...state.inventory].sort((a,b) => a.name.localeCompare(b.name));
-  const total = list.reduce((n,i) => n + i.qty, 0);
-  const rows = list.length ? list.map(i => `<div class="item">
+  const list = state.inventory.filter(i => i.name.trim().toLowerCase() !== 'raphu key').sort((a,b) => a.name.localeCompare(b.name));
+  // Raphu Key quantity is automatic: one key for every player on Raphu Keys Donation marked "Not Used".
+  const rk = state.donations.filter(d => d.used === 'Not Used').length;
+  const autoRow = `<div class="item"><div class="meta"><b>Raphu Key</b> <span class="pill">Auto</span>
+      <small>Counted from Raphu Keys Donation (Not Used)</small></div><b>&times;${rk}</b></div>`;
+  const total = list.reduce((n,i) => n + i.qty, 0) + rk;
+  const manualRows = list.length ? list.map(i => `<div class="item">
       <div class="meta"><b>${esc(i.name)}</b></div>
       ${canEdit ? `<div class="row" style="flex:0 0 auto">
         <button class="ghost" onclick="adjInv('${i.id}', -1)">&minus;</button>
@@ -409,13 +414,14 @@ function viewInventory(){
         <button class="ghost" onclick="adjInv('${i.id}', 1)">+</button>
         <button class="del" onclick="removeInvItem('${i.id}')">Remove</button></div>`
       : `<b>&times;${i.qty}</b>`}</div>`).join('')
-    : '<div class="empty">No items in the guild inventory yet.</div>';
+    : '';
+  const rows = autoRow + manualRows;
   const add = `<div class="row" style="margin-bottom:12px">
       <input id="in" placeholder="Item name" style="flex:2" onkeydown="if(event.key==='Enter')addInvItem()">
       <input id="iq" type="number" min="0" value="1" placeholder="Qty" style="flex:1" onkeydown="if(event.key==='Enter')addInvItem()">
       <button class="primary" onclick="addInvItem()">Add item</button></div>`;
   return card(`<h2>Guild Inventory</h2>${E(add)}
-    <div class="muted" style="margin-bottom:6px">${list.length} item types &middot; ${total} total items</div>${rows}`);
+    <div class="muted" style="margin-bottom:6px">${list.length + 1} item types &middot; ${total} total items</div>${rows}`);
 }
 
 function viewRaphu(){
