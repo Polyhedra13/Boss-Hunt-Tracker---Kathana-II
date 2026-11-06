@@ -4,21 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>&lt;.JoyStickRevenGe.&gt; Boss Hunt Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f4fb;--surface:#fff;--text:#1d1733;--muted:#6b6485;--accent:#6d3fd1;--accent-soft:#ece5fb;--line:#e3dff0;--danger:#c9394f}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15121f;--surface:#211c31;--text:#f1edff;--muted:#a59dc2;--accent:#a684ff;--accent-soft:#2d2643;--line:#342f4a;--danger:#ff6b81}}
+:root{--bg:#0c1006;--surface:#151a0c;--text:#f3ead0;--muted:#a99c74;--accent:#f0c010;--accent-soft:#2a2408;--line:#3a3213;--danger:#e0453a;--red:#c0262d;--on-accent:#1a1405;color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(ellipse at 50% -10%,#2a2408 0,var(--bg) 55%) fixed,var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 header{padding:20px 16px 8px;max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-h1{font-size:1.4rem;margin:0}
-h2{font-size:1.05rem;margin:0 0 12px}
+h1{font-size:1.4rem;margin:0;color:var(--accent);text-shadow:0 0 18px rgba(240,192,16,.35)}
+h2{font-size:1.05rem;margin:0 0 12px;padding-left:10px;border-left:3px solid var(--red);color:var(--accent)}
 .sub{color:var(--muted);font-size:.9rem;margin-top:4px}
-.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:600;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+.badge.on{background:var(--red);color:#fff;border-color:var(--red)}
+.divider{width:calc(100% - 32px);max-width:928px;height:2px;margin:6px auto 0;background:linear-gradient(90deg,var(--accent),var(--red),transparent)}
 nav{display:flex;gap:6px;flex-wrap:wrap;max-width:960px;margin:12px auto 0;padding:0 16px}
 nav button{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:.9rem}
-nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+nav button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+nav button:hover{border-color:var(--accent)}
 main{max-width:960px;margin:16px auto;padding:0 16px 40px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 0 0 1px rgba(240,192,16,.05),0 6px 18px rgba(0,0,0,.35)}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:720px){.grid2{grid-template-columns:1fr}}
 label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:10px}
@@ -28,9 +34,9 @@ fieldset{border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0
 legend{color:var(--muted);font-size:.85rem;padding:0 4px}
 .chks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .chk{display:flex;align-items:center;gap:6px;color:var(--text);font-size:.92rem;margin:0}
-button.primary{background:var(--accent);color:#fff;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:.95rem}
+button.primary{background:linear-gradient(180deg,#f7d23a,#d9a90c);color:var(--on-accent);font-weight:600;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:.95rem}
 button.ghost{background:transparent;border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.85rem}
-button.del{background:transparent;border:1px solid var(--danger);color:var(--danger);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.85rem}
+button.del{background:rgba(192,38,45,.12);border:1px solid var(--danger);color:var(--danger);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:.85rem}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .row>*{flex:1 1 auto}
 .row button{flex:0 0 auto}
@@ -38,7 +44,7 @@ button.del{background:transparent;border:1px solid var(--danger);color:var(--dan
 .scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.95rem}
 th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);font-weight:600;font-size:.82rem}
+th{color:var(--accent);font-weight:600;font-size:.82rem;border-bottom:2px solid var(--red)}
 td:first-child{width:36px;color:var(--muted)}
 .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .item:last-child{border-bottom:0}
@@ -54,9 +60,27 @@ ol.rules li{margin-bottom:10px;line-height:1.5}
 .dlg .row{justify-content:flex-end;margin-top:12px}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;max-width:90%;opacity:0;pointer-events:none;transition:opacity .2s;z-index:110}
 #toast.show{opacity:1}
+details.kill{flex:1 1 200px}
+details.kill summary{cursor:pointer;list-style:none;display:block;padding:2px 0;font-size:.92rem}
+details.kill summary::-webkit-details-marker{display:none}
+details.kill summary::before{content:"\25B8  ";color:var(--muted)}
+details.kill[open] summary::before{content:"\25BE  "}
+details.kill summary small{display:block;color:var(--muted);margin-top:2px;padding-left:1.1em}
+.att-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.att-list span{background:var(--accent-soft);border-radius:8px;padding:4px 10px;font-size:.85rem}
+ul.rules{padding-left:20px;margin:0 0 6px}
+ul.rules li{margin-bottom:8px;line-height:1.5}
+h3.rh{font-size:.95rem;margin:14px 0 8px;color:var(--danger)}
+.wm{position:fixed;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;pointer-events:none;user-select:none;overflow:hidden;
+  font-family:Cinzel,"Trajan Pro",Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(40px,10.5vw,150px);letter-spacing:.08em;white-space:nowrap;
+  opacity:.07;transform:translateY(-4%)}
+.wm span.t{background:linear-gradient(180deg,#f6e8bd 0%,#d9bf86 55%,#b8955a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.wm .k{font-size:1.3em}
+header,nav,main,.divider{position:relative;z-index:1}
 </style>
 </head>
 <body>
+<div class="wm" aria-hidden="true"><span class="t"><span class="k">K</span>ATHANA II</span></div>
 <header>
   <div>
     <h1>&lt;.JoyStickRevenGe.&gt; Boss Hunt Tracker</h1>
@@ -64,9 +88,12 @@ ol.rules li{margin-bottom:10px;line-height:1.5}
   </div>
   <div class="row" style="flex:0 0 auto" id="auth"></div>
 </header>
+<div class="divider"></div>
 <nav>
   <button data-t="board" onclick="setTab('board')">Leaderboard</button>
   <button data-t="boss" onclick="setTab('boss')">Boss Hunts</button>
+  <button data-t="raphu" onclick="setTab('raphu')">Raphu Keys Donation</button>
+  <button data-t="inventory" onclick="setTab('inventory')">Guild Inventory</button>
   <button data-t="shop" onclick="setTab('shop')">Shop</button>
   <button data-t="setup" onclick="setTab('setup')">Players &amp; Bosses</button>
   <button data-t="rules" onclick="setTab('rules')">Rules</button>
@@ -83,7 +110,7 @@ function defaults(){
     players: [],
     bosses: [{id:uid(),name:'Raphu',points:10},{id:uid(),name:'Egypt Party',points:15},{id:uid(),name:'Meghamallin',points:20}],
     items: [{id:uid(),name:'Prajati',cost:30},{id:uid(),name:'Surapa',cost:50},{id:uid(),name:'Crystal',cost:20},{id:uid(),name:'Sumati',cost:40}],
-    kills: [], redemptions: []
+    kills: [], redemptions: [], donations: [], inventory: []
   };
 }
 
@@ -93,6 +120,8 @@ const card = h => `<section class="card">${h}</section>`;
 const E = h => canEdit ? h : '';
 const fmt = iso => new Date(iso).toLocaleString(undefined,{dateStyle:'medium', timeStyle:'short'});
 const nowLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,16); };
+const byName = (a,b) => a.name.localeCompare(b.name, undefined, {sensitivity:'base'});
+const sortedPlayers = () => [...state.players].sort(byName);
 const playerName = id => (state.players.find(p => p.id === id) || {}).name || '(removed)';
 
 /* ---------- Notices and dialogs ---------- */
@@ -128,6 +157,7 @@ async function loadState(){
   const r = await fetch('/api', {cache:'no-store'});
   const d = await r.json();
   state = d.state || defaults();
+  if(!state.donations) state.donations = []; if(!state.inventory) state.inventory = [];
   rev = d.rev || 0;
 }
 async function checkPass(pw){
@@ -144,7 +174,7 @@ async function push(){
     });
     if(r.status === 401){ lock(); notify('Passcode is no longer valid. Editing locked.'); return; }
     const d = await r.json();
-    if(r.status === 409){ state = d.state || defaults(); rev = d.rev; render(); notify('Someone else just saved changes. Your last action was not saved, please redo it.'); return; }
+    if(r.status === 409){ state = d.state || defaults(); if(!state.donations) state.donations = []; if(!state.inventory) state.inventory = []; rev = d.rev; render(); notify('Someone else just saved changes. Your last action was not saved, please redo it.'); return; }
     if(!r.ok){ notify('Could not save. Please try again.'); return; }
     rev = d.rev;
   }catch(e){ notify('Network error. Your last change was not saved.'); }
@@ -240,6 +270,51 @@ function deleteRedemption(id){
   askConfirm('Undo this redemption? The points will be returned.', () => { state.redemptions = state.redemptions.filter(r => r.id !== id); commit(); });
 }
 
+/* ---------- Raphu Keys Donation ---------- */
+function addDonor(){
+  const name = $('#dn').value.trim();
+  if(!name){ notify('Enter a player name.'); return; }
+  state.donations.push({id:uid(), name, used:'Not Used', result:''});
+  commit();
+}
+function setDonorUsed(id, v){
+  const d = state.donations.find(x => x.id === id);
+  if(!d) return;
+  d.used = v === 'Used' ? 'Used' : 'Not Used';
+  if(d.used === 'Not Used') d.result = '';
+  commit();
+}
+function setDonorResult(id, v){
+  const d = state.donations.find(x => x.id === id);
+  if(!d || d.used !== 'Used') return;
+  d.result = (v === 'Success' || v === 'Fail') ? v : '';
+  commit();
+}
+function removeDonor(id){
+  askConfirm('Remove this player from the list?', () => { state.donations = state.donations.filter(x => x.id !== id); commit(); });
+}
+
+/* ---------- Guild Inventory ---------- */
+function addInvItem(){
+  const name = $('#in').value.trim(), qty = parseInt($('#iq').value, 10);
+  if(!name || isNaN(qty) || qty < 0){ notify('Enter an item name and a quantity of 0 or more.'); return; }
+  const ex = state.inventory.find(i => i.name.toLowerCase() === name.toLowerCase());
+  if(ex){ ex.qty += qty; notify(`${ex.name} already existed, so the quantity was added to it.`); }
+  else state.inventory.push({id:uid(), name, qty});
+  commit();
+}
+function setInvQty(id, v){
+  const it = state.inventory.find(x => x.id === id), n = parseInt(v, 10);
+  if(it && !isNaN(n) && n >= 0){ it.qty = n; commit(); } else render();
+}
+function adjInv(id, d){
+  const it = state.inventory.find(x => x.id === id);
+  if(it){ it.qty = Math.max(0, it.qty + d); commit(); }
+}
+function removeInvItem(id){
+  askConfirm('Remove this item from the guild inventory?', () => { state.inventory = state.inventory.filter(x => x.id !== id); commit(); });
+}
+
 /* ---------- Views ---------- */
 function viewBoard(b){
   const rows = state.players.map(p => ({p, ...b[p.id]}))
@@ -247,12 +322,12 @@ function viewBoard(b){
   if(!rows.length) return card('<div class="empty">No players yet.</div>');
   return card(`<h2>Leaderboard</h2><div class="scroll"><table>
     <thead><tr><th>#</th><th>Player</th><th>Hunts</th><th>Earned</th><th>Spent</th><th>Balance</th></tr></thead>
-    <tbody>${rows.map((r,i) => `<tr><td>${i+1}</td><td>${esc(r.p.name)}</td><td>${r.hunts}</td><td>${r.earned}</td><td>${r.spent}</td><td><b>${r.earned - r.spent}</b></td></tr>`).join('')}</tbody></table></div>
+    <tbody>${rows.map((r,i) => `<tr><td style="${i < 3 ? 'color:var(--accent);font-weight:700' : ''}">${i+1}</td><td>${esc(r.p.name)}</td><td>${r.hunts}</td><td>${r.earned}</td><td>${r.spent}</td><td><b>${r.earned - r.spent}</b></td></tr>`).join('')}</tbody></table></div>
     <div class="muted" style="margin-top:10px">Ranked by current balance. Ties are sorted alphabetically.</div>`);
 }
 
 function viewBoss(){
-  const checks = state.players.map(p => `<label class="chk"><input type="checkbox" class="att" value="${p.id}"> ${esc(p.name)}</label>`).join('');
+  const checks = sortedPlayers().map(p => `<label class="chk"><input type="checkbox" class="att" value="${p.id}"> ${esc(p.name)}</label>`).join('');
   const bossOpts = state.bosses.map(b => `<option value="${b.id}">${esc(b.name)} (${b.points} pts)</option>`).join('');
   const form = state.players.length && state.bosses.length
     ? card(`<h2>Record a boss kill</h2>
@@ -265,17 +340,25 @@ function viewBoss(){
     : card('<div class="empty">Add at least one player and one boss under Players &amp; Bosses first.</div>');
 
   const kills = [...state.kills].sort((a,b) => b.datetime.localeCompare(a.datetime));
-  const history = kills.length ? kills.map(k => `<div class="item">
-      <div class="meta"><b>${esc(k.bossName)}</b> <span class="pill">${Object.keys(k.awards).length} players</span>
-        <small>${fmt(k.datetime)}</small>
-        <small>${Object.entries(k.awards).map(([pid,pts]) => `${esc(playerName(pid))} +${pts}`).join(', ')}</small></div>
-      ${E(`<button class="del" onclick="deleteKill('${k.id}')">Delete</button>`)}</div>`).join('')
+  const history = kills.length ? kills.map(k => {
+      const names = Object.entries(k.awards)
+        .map(([pid,pts]) => ({n: playerName(pid), pts}))
+        .sort((x,y) => x.n.localeCompare(y.n));
+      return `<div class="item">
+      <details class="kill">
+        <summary><b>${esc(k.bossName)}</b> <span class="pill">${names.length} attended</span>
+          <small>${fmt(k.datetime)}</small></summary>
+        <div class="muted" style="margin-top:10px">Attendees (${names.length}), +${k.basePoints} pts each:</div>
+        <div class="att-list">${names.map(x => `<span>${esc(x.n)}</span>`).join('')}</div>
+      </details>
+      ${E(`<button class="del" onclick="deleteKill('${k.id}')">Delete</button>`)}</div>`;
+    }).join('')
     : '<div class="empty">No kills recorded yet.</div>';
-  return E(form) + card(`<h2>Kill history</h2>${history}`);
+  return E(form) + card(`<h2>Kill history</h2><div class="muted" style="margin:-6px 0 8px">Tap a kill to see everyone who attended.</div>${history}`);
 }
 
 function viewShop(b){
-  const playerOpts = state.players.map(p => `<option value="${p.id}">${esc(p.name)} (${b[p.id].earned - b[p.id].spent} pts)</option>`).join('');
+  const playerOpts = sortedPlayers().map(p => `<option value="${p.id}">${esc(p.name)} (${b[p.id].earned - b[p.id].spent} pts)</option>`).join('');
   const itemOpts = state.items.map(i => `<option value="${i.id}">${esc(i.name)} (${i.cost} pts)</option>`).join('');
   const items = state.items.length ? state.items.map(i => `<div class="item">
       <div class="meta">${esc(i.name)}</div>
@@ -299,7 +382,7 @@ function viewShop(b){
 }
 
 function viewSetup(){
-  const players = state.players.length ? state.players.map(p => `<div class="item"><div class="meta">${esc(p.name)}</div>
+  const players = state.players.length ? sortedPlayers().map(p => `<div class="item"><div class="meta">${esc(p.name)}</div>
       ${E(`<button class="del" onclick="removePlayer('${p.id}')">Remove</button>`)}</div>`).join('')
     : '<div class="empty">No players yet.</div>';
   const bosses = state.bosses.length ? state.bosses.map(b => `<div class="item"><div class="meta">${esc(b.name)}</div>
@@ -315,28 +398,84 @@ function viewSetup(){
   </div>`;
 }
 
+function viewInventory(){
+  const list = [...state.inventory].sort((a,b) => a.name.localeCompare(b.name));
+  const total = list.reduce((n,i) => n + i.qty, 0);
+  const rows = list.length ? list.map(i => `<div class="item">
+      <div class="meta"><b>${esc(i.name)}</b></div>
+      ${canEdit ? `<div class="row" style="flex:0 0 auto">
+        <button class="ghost" onclick="adjInv('${i.id}', -1)">&minus;</button>
+        <input type="number" min="0" value="${i.qty}" style="width:90px" onchange="setInvQty('${i.id}', this.value)">
+        <button class="ghost" onclick="adjInv('${i.id}', 1)">+</button>
+        <button class="del" onclick="removeInvItem('${i.id}')">Remove</button></div>`
+      : `<b>&times;${i.qty}</b>`}</div>`).join('')
+    : '<div class="empty">No items in the guild inventory yet.</div>';
+  const add = `<div class="row" style="margin-bottom:12px">
+      <input id="in" placeholder="Item name" style="flex:2" onkeydown="if(event.key==='Enter')addInvItem()">
+      <input id="iq" type="number" min="0" value="1" placeholder="Qty" style="flex:1" onkeydown="if(event.key==='Enter')addInvItem()">
+      <button class="primary" onclick="addInvItem()">Add item</button></div>`;
+  return card(`<h2>Guild Inventory</h2>${E(add)}
+    <div class="muted" style="margin-bottom:6px">${list.length} item types &middot; ${total} total items</div>${rows}`);
+}
+
+function viewRaphu(){
+  const list = [...state.donations].sort(byName);
+  const used = list.filter(d => d.used === 'Used').length;
+  const ok = list.filter(d => d.result === 'Success').length;
+  const fail = list.filter(d => d.result === 'Fail').length;
+  const opt = (v, cur, label) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${label || v}</option>`;
+  const rows = list.length ? list.map(d => `<div class="item">
+      <div class="meta"><b>${esc(d.name)}</b></div>
+      ${canEdit ? `<div class="row" style="flex:0 0 auto">
+        <select style="width:125px;margin:0" onchange="setDonorUsed('${d.id}', this.value)">${opt('Not Used', d.used)}${opt('Used', d.used)}</select>
+        <select style="width:115px;margin:0" ${d.used === 'Used' ? '' : 'disabled'} onchange="setDonorResult('${d.id}', this.value)">${opt('', d.result, '\u2014')}${opt('Fail', d.result)}${opt('Success', d.result)}</select>
+        <button class="del" onclick="removeDonor('${d.id}')">Remove</button></div>`
+      : `<div class="row" style="flex:0 0 auto"><span class="pill">${d.used}</span> <span class="pill">${d.result || '\u2014'}</span></div>`}</div>`).join('')
+    : '<div class="empty">No players added yet.</div>';
+  const add = `<div class="row" style="margin-bottom:12px">
+      <input id="dn" list="dl" placeholder="Player name" onkeydown="if(event.key==='Enter')addDonor()">
+      <datalist id="dl">${sortedPlayers().map(p => `<option value="${esc(p.name)}">`).join('')}</datalist>
+      <button class="primary" onclick="addDonor()">Add player</button></div>`;
+  return card(`<h2>Raphu Keys Donation</h2>${E(add)}
+    <div class="muted" style="margin-bottom:6px">${list.length} players &middot; ${used} used &middot; ${ok} success &middot; ${fail} fail</div>
+    ${rows}`);
+}
+
 function viewRules(){
-  return card(`<h2>How scoring works</h2><ol class="rules">
-    <li><b>Equal reward for everyone present.</b> Every attendee on a kill earns the boss's full point value. Points are never split, so joining a hunt never lowers anyone's score.</li>
-    <li><b>Boss value reflects difficulty.</b> Harder bosses are worth more. Defaults are Raphu 10, Egypt Party 15, and Meghamallin 20.</li>
-    <li><b>Attendance is recorded per kill.</b> Only people checked as attendees earn points.</li>
-    <li><b>Scores are locked at kill time.</b> Changing a boss value later does not rewrite past results.</li>
-    <li><b>Redemptions cannot overdraw.</b> A player can only redeem an item if their balance covers the cost. Undoing a redemption returns the points.</li>
-    <li><b>Corrections are safe.</b> Deleting a kill removes its points. Players with any history cannot be removed.</li>
-    <li><b>Ranking.</b> The leaderboard ranks by current balance, with ties sorted alphabetically.</li>
-    <li><b>Who can edit.</b> Everyone can view. Only officers with the editor passcode can record or change anything.</li>
+  const important = card(`<h2>IMPORTANT RULES</h2><ol class="rules">
+    <li>All earned points are <b>NON-TRANSFERABLE</b>.<br><span class="muted">Hindi pwedeng ipasa, ibenta, or ilipat ang points sa ibang player.</span></li>
+    <li>Points are <b>strictly for personal use only</b>.</li>
+    <li>Only <b>ONE (1) registered Main Character</b> per player is eligible to claim a Crystal.<br><span class="muted">Hindi pwedeng gamitin ang alt characters para mag-claim ng additional Crystal.</span></li>
   </ol>`);
+  const raphu = card(`<h2>RAPHU KEY DONATION SYSTEM</h2>
+    <p style="margin:0 0 14px;line-height:1.5">For members na gustong makakuha ng <b>Crystal without using points</b>, pwede kayong mag-donate ng Raphu Keys.</p>
+    <h3 class="rh">Requirements</h3>
+    <ul class="rules">
+      <li>Must have at least <b>50,000 Master Points</b>.</li>
+      <li>Must be a member of <b>Vishnu God</b> for at least <b>1 week</b>.</li>
+      <li>Must have earned at least <b>25 Guild Points</b>.</li>
+    </ul>
+    <h3 class="rh">Donation Rules</h3>
+    <ul class="rules">
+      <li><b>2 Raphu Keys = 1 Crystal ONLY</b></li>
+      <li>Both Raphu runs must be completed bago ma-release ang Crystal sa donor.</li>
+      <li>All other loots from both runs will automatically go to the <b>Guild Inventory</b>.</li>
+      <li>Ang Crystal reward ay para lamang sa <b>registered Main Character</b> ng donor.</li>
+      <li><b>No consecutive donations allowed.</b> After donating 2 Raphu Keys, kailangan munang bigyan ng chance ang ibang members na mag-donate.</li>
+      <li>Pwede lang ulit mag-donate ang same player kapag wala nang ibang available Raphu Keys from other members.</li>
+    </ul>`);
+  return important + raphu;
 }
 
 function render(){
   if(!state) return;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
-  $('#auth').innerHTML = `<span class="badge">${canEdit ? 'Editor' : 'View only'}</span>
+  $('#auth').innerHTML = `<span class="badge ${canEdit ? 'on' : ''}">${canEdit ? 'Editor' : 'View only'}</span>
     <button class="ghost" onclick="refresh()">Refresh</button>
     ${canEdit ? '<button class="ghost" onclick="lock()">Lock</button>' : '<button class="ghost" onclick="unlock()">Editor login</button>'}`;
   const b = balances();
   $('#view').innerHTML = tab === 'board' ? viewBoard(b) : tab === 'shop' ? viewShop(b)
-    : tab === 'boss' ? viewBoss() : tab === 'setup' ? viewSetup() : viewRules();
+    : tab === 'boss' ? viewBoss() : tab === 'raphu' ? viewRaphu() : tab === 'inventory' ? viewInventory() : tab === 'setup' ? viewSetup() : viewRules();
 }
 function setTab(t){ tab = t; render(); }
 
