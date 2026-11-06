@@ -2,6 +2,7 @@ import { getStore } from "@netlify/blobs";
 import { timingSafeEqual } from "node:crypto";
 
 const KEYS = ["players", "bosses", "items", "kills", "redemptions"];
+const OPTIONAL = ["donations", "inventory"]; // older data may not have these yet
 
 const json = (o, s = 200) =>
   new Response(JSON.stringify(o), {
@@ -46,7 +47,10 @@ export default async (req) => {
     const cur = (await store.get("data", { type: "json" })) || { rev: 0, state: null };
     if (body.baseRev !== cur.rev) return json(cur, 409);
 
-    const next = { rev: cur.rev + 1, state: Object.fromEntries(KEYS.map((k) => [k, s[k]])) };
+    const next = {
+      rev: cur.rev + 1,
+      state: Object.fromEntries([...KEYS, ...OPTIONAL].map((k) => [k, Array.isArray(s[k]) ? s[k] : []])),
+    };
     await store.setJSON("data", next);
     return json({ rev: next.rev });
   }
